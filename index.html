@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#06172a" />
+  <title>ATDSIGNALS — Advanced Market</title>
+  <style>
+    :root{
+      --bg:#03101d;
+      --panel:#071d30;
+      --panel2:#0a2941;
+      --cyan:#00e7ff;
+      --cyan2:#12bfff;
+      --pink:#ff16c8;
+      --pink2:#ff4be0;
+      --text:#f2fbff;
+      --muted:#8eabc0;
+      --line:rgba(0,231,255,.18);
+      --shadow:0 0 40px rgba(0,213,255,.10), inset 0 1px 0 rgba(255,255,255,.03);
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:
+      radial-gradient(circle at 12% 12%,rgba(0,218,255,.14),transparent 28%),
+      radial-gradient(circle at 88% 22%,rgba(255,20,200,.11),transparent 26%),
+      linear-gradient(145deg,#020b15 0%,#06192b 50%,#03101d 100%);
+      color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    body{overflow-x:hidden}
+    a{color:inherit}
+    .page{width:min(1180px,100%);margin:auto;padding:18px}
+    .nav{
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      padding:12px 4px 20px
+    }
+    .brand{font-weight:900;letter-spacing:.08em;font-size:20px}
+    .brand span{color:var(--pink)}
+    .nav-right{display:flex;align-items:center;gap:9px}
+    .pill,.mail{
+      border:1px solid var(--line);background:rgba(5,30,48,.72);backdrop-filter:blur(10px);
+      border-radius:999px;padding:9px 13px;font-size:12px;color:#dff8ff;text-decoration:none
+    }
+    .mail{cursor:pointer}
+    .hero{
+      position:relative;overflow:hidden;border:1px solid var(--line);border-radius:24px;
+      background:linear-gradient(135deg,rgba(5,31,50,.96),rgba(4,18,31,.92));
+      min-height:420px;padding:36px;box-shadow:var(--shadow)
+    }
+    .hero:before{
+      content:"";position:absolute;width:330px;height:330px;border-radius:50%;right:-80px;top:-80px;
+      background:radial-gradient(circle,rgba(0,232,255,.18),transparent 66%);
+      filter:blur(8px)
+    }
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:center}
+    .eyebrow{font-size:11px;letter-spacing:.18em;color:var(--cyan);font-weight:800;text-transform:uppercase}
+    h1{font-size:clamp(40px,6vw,72px);line-height:.96;margin:14px 0 18px;max-width:680px}
+    h1 span{color:var(--pink);text-shadow:0 0 24px rgba(255,22,200,.35)}
+    .hero p{max-width:570px;color:var(--muted);line-height:1.7;margin:0}
+    .cta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:25px}
+    button,.button{
+      border:0;border-radius:11px;padding:12px 17px;font-weight:800;cursor:pointer;
+      color:#02121d;background:linear-gradient(135deg,var(--cyan),#52f3ff);
+      box-shadow:0 8px 25px rgba(0,231,255,.16)
+    }
+    .secondary{background:rgba(255,22,200,.1);color:#fff;border:1px solid rgba(255,22,200,.42);box-shadow:none}
+    .market-art{position:relative;height:300px;display:flex;align-items:flex-end;justify-content:center;gap:15px}
+    .bar{width:58px;border-radius:7px 7px 0 0;background:linear-gradient(180deg,#00f5ff,#0873a6);box-shadow:0 0 25px rgba(0,231,255,.23)}
+    .bar:nth-child(1){height:78px}.bar:nth-child(2){height:125px}.bar:nth-child(3){height:175px}.bar:nth-child(4){height:225px}
+    .trend{position:absolute;width:75%;height:5px;right:2%;bottom:74px;background:var(--cyan);transform:rotate(-25deg);transform-origin:right center;box-shadow:0 0 18px var(--cyan)}
+    .trend:after{content:"";position:absolute;right:-1px;top:-10px;border-left:25px solid var(--cyan);border-top:12px solid transparent;border-bottom:12px solid transparent}
+    .chart-section{margin-top:20px}
+    .section-title{display:flex;justify-content:space-between;align-items:end;gap:15px;margin:30px 0 12px}
+    .section-title h2{margin:0;font-size:25px}
+    .section-title p{margin:4px 0 0;color:var(--muted);font-size:12px}
+    .chart-card{
+      border:1px solid var(--line);border-radius:20px;background:rgba(4,23,38,.92);padding:14px;
+      box-shadow:var(--shadow)
+    }
+    .search-row{display:flex;gap:8px;margin-bottom:12px}
+    .search-wrap{position:relative;flex:1}
+    input{
+      width:100%;border:1px solid rgba(0,231,255,.24);background:#041522;color:#fff;
+      outline:none;border-radius:11px;padding:13px 14px;font-size:14px
+    }
+    input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,231,255,.08)}
+    .chart-actions{display:flex;gap:7px}
+    .icon-btn{padding:10px 12px;background:#09283d;color:#bfefff;border:1px solid var(--line);box-shadow:none}
+    .status{font-size:11px;color:var(--muted);padding:4px 3px 10px}
+    #chart{height:430px;border-radius:13px;overflow:hidden;background:#03121f}
+    .quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+    .quick button{padding:7px 10px;font-size:11px;background:#08263a;color:#aeefff;border:1px solid var(--line);box-shadow:none}
+
+    .courses-section{margin-top:28px;padding:30px 0 6px}
+    .courses-heading{text-align:center;max-width:720px;margin:0 auto 22px}
+    .courses-heading .eyebrow{color:#2fffe2}
+    .courses-heading h2{font-size:clamp(28px,5vw,44px);margin:10px 0 9px}
+    .courses-heading h2 span{color:#2fffe2}
+    .courses-heading p{color:#87aeb8;line-height:1.65;font-size:13px}
+    .courses{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:28px}
+    .course{position:relative;display:flex;flex-direction:column;padding:26px;border:1px solid rgba(0,231,255,.25);border-radius:22px;background:linear-gradient(145deg,rgba(7,29,48,.95),rgba(3,16,29,.96));box-shadow:0 14px 45px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden;transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+    .course::before{content:"";position:absolute;inset:0;border-radius:22px;padding:1px;background:linear-gradient(135deg,rgba(0,231,255,.55),rgba(255,22,200,.25),transparent 65%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+    .course:hover{transform:translateY(-6px);border-color:rgba(0,231,255,.55);box-shadow:0 20px 55px rgba(0,231,255,.10),0 0 28px rgba(255,22,200,.06)}
+    .course.featured{border-color:rgba(255,22,200,.48);box-shadow:0 18px 50px rgba(255,22,200,.08),inset 0 1px 0 rgba(255,255,255,.05)}
+    .course.featured::after{content:"";position:absolute;top:0;left:12%;right:12%;height:2px;background:linear-gradient(90deg,transparent,var(--pink),transparent);box-shadow:0 0 18px var(--pink)}
+    .badge{display:inline-flex;align-self:flex-start;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,231,255,.25);background:rgba(0,231,255,.07);color:#aef7ff;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .course.featured .badge{border-color:rgba(255,22,200,.38);background:rgba(255,22,200,.09);color:#ffd5f7}
+    .course h3{margin:18px 0 8px;font-size:24px;letter-spacing:-.02em}
+    .course .desc{margin:0;color:var(--muted);font-size:12px;line-height:1.7;min-height:62px}
+    .price{margin:22px 0 16px;font-size:31px;font-weight:950;color:#fff;letter-spacing:-.03em}
+    .price small{font-size:11px;font-weight:600;color:#7694a7;letter-spacing:0}
+    .course ul{list-style:none;margin:0 0 22px;padding:0;display:grid;gap:10px}
+    .course li{position:relative;padding-left:22px;color:#c7e4ef;font-size:12px;line-height:1.5}
+    .course li::before{content:"✓";position:absolute;left:0;top:0;color:var(--cyan);font-weight:900}
+    .buy-btn{margin-top:auto;display:block;text-align:center;text-decoration:none;padding:12px 15px;border-radius:11px;border:1px solid rgba(0,231,255,.35);background:linear-gradient(135deg,rgba(0,231,255,.14),rgba(0,231,255,.04));color:#dffcff;font-size:12px;font-weight:900;transition:.2s ease}
+    .buy-btn:hover{background:linear-gradient(135deg,var(--cyan),#52f3ff);color:#02121d;box-shadow:0 8px 24px rgba(0,231,255,.18)}
+    .course-note{text-align:center;color:#5f7f92;font-size:11px;margin:18px 0 0}
+
+    @media(max-width:760px){
+  
+    .chart-card{transition:background .45s ease,border-color .45s ease,box-shadow .45s ease}
+    .chart-card.golden-mode{
+      background:
+        radial-gradient(circle at 90% 0%,rgba(255,211,77,.12),transparent 32%),
+        linear-gradient(145deg,#1b1508,#070707);
+      border-color:rgba(255,211,77,.42);
+      box-shadow:0 18px 60px rgba(255,190,40,.10),inset 0 1px 0 rgba(255,245,180,.08);
+    }
+    .chart-card.golden-mode .status{color:#d8bf76}
+    .chart-details{display:none;margin:14px 0 2px;padding:18px;border:1px solid rgba(255,211,77,.32);border-radius:17px;background:linear-gradient(145deg,rgba(35,27,9,.96),rgba(8,8,7,.98))}
+    .chart-details.open{display:block}
+    .details-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .details-head h3{margin:9px 0 3px;font-size:25px;color:#ffe49a}
+    .details-head p{margin:0;color:#9d8c61;font-size:12px}
+    .detail-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:16px}
+    .detail-stat{padding:13px;border:1px solid rgba(255,211,77,.16);border-radius:12px;background:rgba(255,211,77,.035)}
+    .detail-stat span{display:block;color:#9d8c61;font-size:10px;margin-bottom:6px}
+    .detail-stat strong{font-size:15px;color:#f9e6a8}
+    .paper-box{margin-top:14px;padding:15px;border-radius:14px;border:1px solid rgba(255,211,77,.18);background:rgba(0,0,0,.18)}
+    .paper-box h4{margin:9px 0 5px;color:#f8e5a3}
+    .paper-box p{margin:0;color:#8e8060;font-size:11px;line-height:1.55}
+    .paper-form{display:grid;grid-template-columns:120px 1fr auto;gap:8px;margin-top:14px}
+    .paper-form select,.paper-form input{border:1px solid rgba(255,211,77,.25);background:#0b0a07;color:#fff;border-radius:10px;padding:11px}
+    .paper-form .golden-btn{border:1px solid rgba(255,211,77,.5);border-radius:10px;padding:11px 14px;font-weight:900;cursor:pointer;background:linear-gradient(135deg,#ffd45a,#ffb52e);color:#171006}
+    .paper-balance{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,211,77,.05);color:#b6a878;font-size:12px}
+    .paper-balance strong{color:#ffe49a}
+    .orders-wrap{margin-top:15px}.orders-wrap h4{margin:0 0 8px}
+    .orders-list{display:grid;gap:7px}.empty-orders{color:#756b52;font-size:11px}
+    .paper-order{display:grid;grid-template-columns:70px 1fr 1fr 1fr;gap:8px;padding:9px;border:1px solid rgba(255,211,77,.12);border-radius:9px;font-size:11px;color:#cbbd95}
+    .paper-order b{color:#ffe49a}
+    @media(max-width:760px){
+      .detail-grid{grid-template-columns:repeat(2,1fr)}
+      .paper-form{grid-template-columns:1fr 1fr}
+      .paper-form .golden-btn{grid-column:1 / -1}
+      .paper-order{grid-template-columns:1fr 1fr}
+    }
+    .golden-course{grid-column:auto}
+      .courses-section{padding-top:24px}
+      .courses{grid-template-columns:1fr}
+      .course{padding:22px}
+      .course .desc{min-height:0}
+    }
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+    .card{padding:22px;border:1px solid var(--line);border-radius:18px;background:rgba(6,28,45,.72)}
+    .card strong{display:block;font-size:17px;margin-bottom:7px}
+    .card p{color:var(--muted);font-size:12px;line-height:1.65;margin:0}
+    .pink-line{width:45px;height:3px;background:var(--pink);box-shadow:0 0 12px var(--pink);margin-bottom:14px}
+    footer{padding:28px 5px 10px;color:#66849a;font-size:11px;text-align:center}
+
+    .golden-course{
+      grid-column:1 / -1;
+      max-width:760px;
+      width:100%;
+      justify-self:center;
+      background:
+        radial-gradient(circle at 85% 15%,rgba(255,215,80,.18),transparent 30%),
+        linear-gradient(145deg,#241b08 0%,#0f0d08 48%,#171007 100%);
+      border:1px solid rgba(255,205,75,.65);
+      box-shadow:0 18px 70px rgba(255,190,35,.12),inset 0 1px 0 rgba(255,245,180,.12);
+    }
+    .golden-course::before{
+      background:linear-gradient(135deg,rgba(255,224,111,.9),rgba(255,164,35,.45),transparent 68%);
+    }
+    .gold-badge{
+      display:inline-flex;align-self:flex-start;padding:7px 12px;border-radius:999px;
+      border:1px solid rgba(255,215,80,.55);background:rgba(255,196,45,.10);
+      color:#ffe79a;font-size:10px;font-weight:950;letter-spacing:.12em;text-transform:uppercase;
+      box-shadow:0 0 20px rgba(255,195,50,.10);
+    }
+    .golden-course h3{color:#ffe49a;text-shadow:0 0 22px rgba(255,190,50,.22)}
+    .gold-price{color:#ffe39a}
+    .golden-btn{
+      border-color:rgba(255,210,75,.55);
+      background:linear-gradient(135deg,rgba(255,211,77,.18),rgba(255,168,30,.06));
+      color:#ffeab0;
+    }
+    .golden-btn:hover{
+      background:linear-gradient(135deg,#ffd45a,#ffb52e);
+      color:#171006;
+      box-shadow:0 8px 30px rgba(255,190,40,.24);
+    }
+    .gold-detail-modal .modal-box{
+      border-color:rgba(255,211,77,.55);
+      background:
+        radial-gradient(circle at 90% 0%,rgba(255,211,77,.14),transparent 35%),
+        linear-gradient(145deg,#241b08,#090807);
+      box-shadow:0 0 80px rgba(255,190,40,.16);
+    }
+    .gold-detail-list{list-style:none;padding:0;margin:18px 0;display:grid;gap:10px}
+    .gold-detail-list li{color:#eadcb5;font-size:13px;padding-left:22px;position:relative}
+    .gold-detail-list li::before{content:"✦";position:absolute;left:0;color:#ffd45a}
+    .gold-detail-price{font-size:27px;font-weight:950;color:#ffd968;margin:15px 0}
+    .modal-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+    .modal-actions .golden-btn{flex:1;min-width:180px}
+    .modal{position:fixed;inset:0;background:rgba(0,4,10,.76);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:18px;z-index:20}
+    .modal.open{display:flex}
+    .modal-box{max-width:520px;width:100%;border:1px solid rgba(255,22,200,.35);border-radius:20px;background:linear-gradient(145deg,#071f33,#040f1b);padding:26px;box-shadow:0 0 70px rgba(0,231,255,.15)}
+    .modal-box h3{margin:0 0 10px;font-size:26px}.modal-box p{color:#9bb5c5;line-height:1.7;font-size:13px}
+    .email-link{color:var(--cyan);font-weight:800}
+    .course-form{display:grid;gap:12px;margin-top:18px}
+    .course-form label{font-size:11px;color:#a9c6d5;font-weight:800}
+    .course-form input{margin-top:6px}
+    .coupon-row{display:flex;gap:8px;align-items:end}
+    .coupon-row>div{flex:1}
+    .coupon-msg{font-size:11px;min-height:16px;color:#8eabc0}
+    .course-form .submit-btn{width:100%;margin-top:4px}
+    .selected-course{color:var(--cyan);font-weight:900}
+    @media(max-width:760px){
+      .page{padding:12px}
+      .nav{padding-bottom:13px}.pill{display:none}
+      .hero{padding:24px 20px;min-height:auto}.hero-grid{grid-template-columns:1fr}
+      .market-art{height:180px;order:-1}.bar{width:40px}.bar:nth-child(1){height:48px}.bar:nth-child(2){height:75px}.bar:nth-child(3){height:105px}.bar:nth-child(4){height:140px}
+      .trend{bottom:42px}.hero p{font-size:13px}
+      .cards{grid-template-columns:1fr}.card{padding:18px}
+      #chart{height:360px}
+      .search-row{align-items:stretch}.chart-actions{flex-shrink:0}
+      .chart-actions .icon-btn{font-size:0}.chart-actions .icon-btn::after{font-size:14px}.chart-actions .icon-btn:first-child::after{content:"↻"}.chart-actions .icon-btn:last-child::after{content:"⛶"}
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <nav class="nav">
+      <div class="brand">ATD<span>SIGNALS</span></div>
+      <div class="nav-right">
+        <span class="pill">ADVANCED MARKET</span>
+        <a class="mail" href="mailto:ahmedkhan2392011@gmail.com">Help & Contact</a>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">Welcome to the advanced market</div>
+          <h1>A smarter way to <span>trade crypto.</span></h1>
+          <p>
+            ATDSIGNALS is a dark, neon market dashboard created by <b>Ahmed Khan</b>
+            for traders who want a focused place to explore price action, markets and charts.
+          </p>
+          <div class="cta-row">
+            <a class="button" href="#courses">Get Courses ↓</a>
+            <a class="button secondary" href="#market">Explore Market</a>
+            <button class="secondary" id="aboutBtn">About Ahmed Khan</button>
+          </div>
+        </div>
+        <div class="market-art" aria-label="Neon market illustration">
+          <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          <div class="trend"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="market" class="chart-section">
+      <div class="section-title">
+        <div>
+          <h2>Live Market Chart</h2>
+          <p>Search crypto or forex pairs such as BTCUSDT, EURUSD, GBPUSD or USDJPY.</p>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="search-row">
+          <div class="search-wrap">
+            <input id="symbolInput" value="BTCUSDT" placeholder="Enter pair, e.g. BTCUSDT" autocomplete="off" />
+          </div>
+          <div class="chart-actions">
+            <button class="icon-btn" id="loadBtn" title="Load chart">Load</button>
+            <button class="icon-btn" id="detailBtn" title="Open chart details">Details</button>
+            <button class="icon-btn" id="fullscreenBtn" title="Fullscreen chart">Fullscreen</button>
+          </div>
+        </div>
+        <div class="status" id="status">Ready — loading BTCUSDT…</div>
+        <div id="chart"></div>
+
+        <div class="chart-details" id="chartDetails">
+          <div class="details-head">
+            <div>
+              <span class="gold-badge">MARKET DETAILS</span>
+              <h3 id="detailSymbol">BTCUSDT</h3>
+              <p id="detailSummary">Live chart information and paper-trading simulator.</p>
+            </div>
+            <button class="icon-btn" id="closeDetails" type="button">Close</button>
+          </div>
+          <div class="detail-grid">
+            <div class="detail-stat"><span>Last price</span><strong id="detailPrice">—</strong></div>
+            <div class="detail-stat"><span>High</span><strong id="detailHigh">—</strong></div>
+            <div class="detail-stat"><span>Low</span><strong id="detailLow">—</strong></div>
+            <div class="detail-stat"><span>Bars</span><strong id="detailBars">—</strong></div>
+          </div>
+          <div class="paper-box">
+            <div>
+              <span class="gold-badge">PAPER TRADING</span>
+              <h4>Practice orders — no real money</h4>
+              <p>These orders are simulated only and are not sent to any broker or exchange.</p>
+            </div>
+            <div class="paper-form">
+              <select id="orderSide" aria-label="Order side">
+                <option value="BUY">Buy</option>
+                <option value="SELL">Sell</option>
+              </select>
+              <input id="orderQty" type="number" min="0.0001" step="0.0001" value="1" placeholder="Quantity">
+              <button class="golden-btn" id="paperOrderBtn" type="button">Place Fake Order</button>
+            </div>
+            <div class="paper-balance">Paper balance: <strong id="paperBalance">Rs 100,000</strong></div>
+            <div class="orders-wrap">
+              <h4>Paper orders</h4>
+              <div id="paperOrders" class="orders-list"><div class="empty-orders">No paper orders yet.</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="quick">
+          <button data-symbol="BTCUSDT">BTCUSDT</button>
+          <button data-symbol="ETHUSDT">ETHUSDT</button>
+          <button data-symbol="SOLUSDT">SOLUSDT</button>
+          <button data-symbol="BNBUSDT">BNBUSDT</button>
+          <button data-symbol="XRPUSDT">XRPUSDT</button>
+        </div>
+      </div>
+    </section>
+
+
+    <section class="courses-section" id="courses">
+      <div class="courses-heading">
+        <div class="eyebrow">TRADER EDUCATION</div>
+        <h2>Want to become a <span>perfect trader?</span></h2>
+        <p>
+          Build your trading knowledge step by step with professionally structured learning options.
+          Choose the level that fits your goals, then contact ATDSIGNALS on WhatsApp to purchase.
+        </p>
+      </div>
+
+      <div class="courses">
+        <article class="course featured">
+          <span class="badge">Best place to start</span>
+          <h3>Trader Foundation</h3>
+          <p class="desc">A focused introduction for beginners who want to understand the market with a clear learning path.</p>
+          <div class="price">Rs 500 <small>/ course</small></div>
+          <ul>
+            <li>Trading fundamentals</li>
+            <li>Market structure basics</li>
+            <li>Risk & discipline principles</li>
+            <li>Practical learning roadmap</li>
+          </ul>
+          <button class="buy-btn course-access-btn" type="button" data-course="Trader Foundation" data-price="500">Buy Course on WhatsApp</button>
+        </article>
+
+        <article class="course">
+          <span class="badge">Professional</span>
+          <h3>Professional Trader</h3>
+          <p class="desc">A professional learning track for traders ready to build a disciplined and repeatable market process.</p>
+          <div class="price">Rs 1,000 <small>/ course</small></div>
+          <ul>
+            <li>Advanced chart concepts</li>
+            <li>Technical analysis workflow</li>
+            <li>Entry & exit planning</li>
+            <li>Trading psychology essentials</li>
+          </ul>
+          <button class="buy-btn course-access-btn" type="button" data-course="Professional Trader" data-price="1000">Buy Course on WhatsApp</button>
+        </article>
+
+        <article class="course">
+          <span class="badge">Bigger Pro</span>
+          <h3>Bigger Pro Trader</h3>
+          <p class="desc">A premium advanced track for traders who want a deeper, structured trading framework.</p>
+          <div class="price">Rs 5,000 <small>/ course</small></div>
+          <ul>
+            <li>Professional trading framework</li>
+            <li>Advanced market analysis</li>
+            <li>Risk management systems</li>
+            <li>Process & performance mindset</li>
+          </ul>
+          <button class="buy-btn course-access-btn" type="button" data-course="Bigger Pro Trader" data-price="5000">Buy Course on WhatsApp</button>
+        </article>
+
+        <article class="course golden-course" id="goldenIndicatorCourse">
+          <span class="gold-badge">✦ GOLDEN INDICATOR</span>
+          <h3>Golden Indicator</h3>
+          <p class="desc">A premium indicator-focused course for traders who want a cleaner way to study entries, trends and market momentum.</p>
+          <div class="price gold-price">Rs 7,500 <small>/ premium course</small></div>
+          <ul>
+            <li>Golden indicator methodology</li>
+            <li>Trend & momentum confirmation</li>
+            <li>Entry & exit signal framework</li>
+            <li>Practical chart examples</li>
+          </ul>
+          <button class="buy-btn golden-btn" type="button" data-course="Golden Indicator" data-price="7500">View Golden Course Details</button>
+        </article>
+      </div>
+      <p class="course-note">Education only. Trading involves risk; no course guarantees profits or trading results.</p>
+    </section>
+
+<section class="cards">
+      <article class="card"><div class="pink-line"></div><strong>Built for traders</strong><p>A clean market-first interface inspired by the supplied blue, cyan and pink visual style.</p></article>
+      <article class="card"><div class="pink-line"></div><strong>Search any pair</strong><p>Enter a Binance spot symbol and load its latest candlestick market data.</p></article>
+      <article class="card"><div class="pink-line"></div><strong>Mobile ready</strong><p>The layout is mobile-first while expanding into a wider dashboard on desktop screens.</p></article>
+    </section>
+
+    <footer>ATDSIGNALS · Market information is for educational/informational use and is not financial advice.</footer>
+  </div>
+
+  <div class="modal" id="courseModal">
+    <div class="modal-box">
+      <h3>Get access to <span class="selected-course" id="selectedCourse">your course</span></h3>
+      <p>Enter your WhatsApp number and email. After both are provided, you will be taken to WhatsApp to complete your purchase.</p>
+      <form class="course-form" id="courseForm">
+        <label>WhatsApp / Phone Number
+          <input id="customerPhone" type="tel" inputmode="tel" placeholder="e.g. 03123456789" required>
+        </label>
+        <label>Email Address
+          <input id="customerEmail" type="email" placeholder="you@example.com" required>
+        </label>
+        <div class="coupon-row">
+          <div>
+            <label>Coupon Code
+              <input id="couponCode" type="text" placeholder="Enter coupon code">
+            </label>
+          </div>
+          <button type="button" class="secondary" id="applyCoupon">Apply</button>
+        </div>
+        <div class="coupon-msg" id="couponMsg"></div>
+        <button class="submit-btn" type="submit">Continue to WhatsApp</button>
+        <button type="button" class="secondary" id="closeCourseModal">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="modal" id="aboutModal">
+    <div class="modal-box">
+      <h3>Welcome to the advanced market.</h3>
+      <p>
+        <b>Ahmed Khan</b> made ATDSIGNALS for this purpose: to create a focused trading-style
+        market interface where traders can explore charts and market pairs in one place.
+        Ahmed Khan is a trader and the project is designed around a practical, modern trading experience.
+      </p>
+      <p>For help or contact, email <a class="email-link" href="mailto:ahmedkhan2392011@gmail.com">ahmedkhan2392011@gmail.com</a>.</p>
+      <button id="closeModal">Close</button>
+    </div>
+  </div>
+
+  <div class="modal gold-detail-modal" id="goldDetailModal">
+    <div class="modal-box">
+      <span class="gold-badge">✦ PREMIUM INDICATOR COURSE</span>
+      <h3>Golden Indicator</h3>
+      <p>Go deeper into the Golden Indicator system and learn how to use it as part of a structured trading process.</p>
+      <ul class="gold-detail-list">
+        <li>Understand the indicator's core signals and market context.</li>
+        <li>Learn trend, momentum and confirmation techniques.</li>
+        <li>Study practical entry and exit planning.</li>
+        <li>Use risk management alongside indicator signals.</li>
+        <li>Work through real chart-style examples.</li>
+      </ul>
+      <div class="gold-detail-price">Rs 7,500 <small>/ premium course</small></div>
+      <p>Education only. No course guarantees profits or trading results.</p>
+      <div class="modal-actions">
+        <button class="golden-btn" id="goldBuyBtn" type="button">Continue to Golden Course</button>
+        <button class="secondary" id="goldCloseBtn" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/lightweight-charts@4.2.3/dist/lightweight-charts.standalone.production.js"></script>
+  <script>
+    const chartEl = document.getElementById('chart');
+    const statusEl = document.getElementById('status');
+    const input = document.getElementById('symbolInput');
+    const loadBtn = document.getElementById('loadBtn');
+
+    const chart = LightweightCharts.createChart(chartEl, {
+      layout: { background: { type: 'solid', color: '#03121f' }, textColor: '#8eabc0' },
+      grid: { vertLines: { color: 'rgba(0,231,255,.06)' }, horzLines: { color: 'rgba(0,231,255,.06)' } },
+      crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+      rightPriceScale: { borderColor: 'rgba(0,231,255,.15)' },
+      timeScale: { borderColor: 'rgba(0,231,255,.15)', timeVisible: true, secondsVisible: false },
+      width: chartEl.clientWidth,
+      height: 430
+    });
+
+    const series = chart.addCandlestickSeries({
+      upColor: '#00e7ff',
+      downColor: '#ff16c8',
+      borderUpColor: '#00e7ff',
+      borderDownColor: '#ff16c8',
+      wickUpColor: '#00e7ff',
+      wickDownColor: '#ff16c8'
+    });
+
+    window.addEventListener('resize', () => chart.applyOptions({ width: chartEl.clientWidth }));
+
+    function cleanSymbol(value){
+      return value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+    }
+
+    function normalizeMarketSymbol(value){
+      return value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+    }
+
+    function isForexSymbol(symbol){
+      return /^[A-Z]{6}$/.test(symbol) && !['BTCUSD','ETHUSD','SOLUSD','BNBUSD','XRPUSD'].includes(symbol);
+    }
+
+    function tvSymbol(symbol){
+      if(/USDT$/.test(symbol)) return 'BINANCE:' + symbol;
+      if(/^[A-Z]{6}$/.test(symbol)) return 'FX:' + symbol;
+      return 'BINANCE:' + symbol;
+    }
+
+    async function loadChart(symbol){
+      symbol = normalizeMarketSymbol(symbol);
+      if(!symbol){ statusEl.textContent = 'Enter a market pair.'; return; }
+      input.value = symbol;
+      statusEl.textContent = 'Loading ' + symbol + '…';
+
+      try{
+        let data = [];
+        if(/USDT$/.test(symbol)){
+          const url = `https://api.binance.com/api/v3/klines?symbol=${encodeURIComponent(symbol)}&interval=1h&limit=250`;
+          const response = await fetch(url);
+          if(!response.ok) throw new Error('Crypto pair not found');
+          const raw = await response.json();
+          data = raw.map(k => ({
+            time: Math.floor(k[0]/1000),
+            open: +k[1], high: +k[2], low: +k[3], close: +k[4]
+          }));
+        } else if(isForexSymbol(symbol)){
+          // Browser-friendly demo feed. The chart remains interactive and the
+          // paper-order system is simulated; live forex feeds can be plugged in later.
+          const now = Math.floor(Date.now()/1000);
+          const base = symbol.slice(0,3), quote = symbol.slice(3);
+          const seed = [...symbol].reduce((a,c)=>a+c.charCodeAt(0),0);
+          let price = (base==='JPY'||quote==='JPY') ? 145 + (seed%20) : 1 + (seed%70)/100;
+          for(let i=249;i>=0;i--){
+            const t = now - i*3600;
+            const drift = Math.sin((i+seed)*.17)*price*.0015 + Math.cos((i+seed)*.07)*price*.0008;
+            const open = price;
+            const close = Math.max(.00001, price + drift);
+            const high = Math.max(open,close) + price*.0007;
+            const low = Math.max(.00001,Math.min(open,close) - price*.0007);
+            data.push({time:t,open,high,low,close});
+            price = close;
+          }
+        } else {
+          throw new Error('Use a crypto pair ending in USDT or a 6-letter forex pair such as EURUSD.');
+        }
+
+        series.setData(data);
+        chart.timeScale().fitContent();
+        const last = data[data.length-1];
+        statusEl.textContent = `${symbol} · 1H · Latest ${last.close}`;
+        document.getElementById('detailSymbol').textContent = symbol;
+        document.getElementById('detailPrice').textContent = Number(last.close).toLocaleString(undefined,{maximumFractionDigits:8});
+        document.getElementById('detailHigh').textContent = Number(Math.max(...data.map(x=>x.high))).toLocaleString(undefined,{maximumFractionDigits:8});
+        document.getElementById('detailLow').textContent = Number(Math.min(...data.map(x=>x.low))).toLocaleString(undefined,{maximumFractionDigits:8});
+        document.getElementById('detailBars').textContent = data.length;
+        window.currentMarketPrice = last.close;
+        window.currentMarketSymbol = symbol;
+
+        // As visitors move down into market tools, shift the card to the premium golden theme.
+        document.querySelector('.chart-card').classList.add('golden-mode');
+      }catch(err){
+        statusEl.textContent = err.message || 'Could not load that pair.';
+      }
+    }
+
+    loadBtn.addEventListener('click', () => loadChart(input.value));
+    input.addEventListener('keydown', e => { if(e.key === 'Enter') loadChart(input.value); });
+    document.querySelectorAll('[data-symbol]').forEach(btn => {
+      btn.addEventListener('click', () => loadChart(btn.dataset.symbol));
+    });
+
+    document.getElementById('fullscreenBtn').addEventListener('click', async () => {
+      const target = document.querySelector('.chart-card');
+      try{
+        if(!document.fullscreenElement) await target.requestFullscreen();
+        else await document.exitFullscreen();
+      }catch(e){}
+    });
+
+    const courseModal = document.getElementById('courseModal');
+    const selectedCourse = document.getElementById('selectedCourse');
+    const customerPhone = document.getElementById('customerPhone');
+    const customerEmail = document.getElementById('customerEmail');
+    const couponCode = document.getElementById('couponCode');
+    const couponMsg = document.getElementById('couponMsg');
+    const courseForm = document.getElementById('courseForm');
+    let selectedCourseName = '';
+    let selectedCoursePrice = 0;
+
+    // Add or change your coupon codes here. Example: SAVE10 gives 10% off.
+    const coupons = {
+      SAVE10: 10,
+      ATD20: 20
+    };
+    let appliedDiscount = 0;
+
+    document.querySelectorAll('.course-access-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        selectedCourseName = btn.dataset.course;
+        selectedCoursePrice = Number(btn.dataset.price);
+        selectedCourse.textContent = selectedCourseName;
+        customerPhone.value = '';
+        customerEmail.value = '';
+        couponCode.value = '';
+        couponMsg.textContent = '';
+        appliedDiscount = 0;
+        courseModal.classList.add('open');
+        setTimeout(() => customerPhone.focus(), 50);
+      });
+    });
+
+    document.getElementById('applyCoupon').addEventListener('click', () => {
+      const code = couponCode.value.trim().toUpperCase();
+      if (!code) {
+        appliedDiscount = 0;
+        couponMsg.textContent = 'Enter a coupon code.';
+        return;
+      }
+      if (coupons[code]) {
+        appliedDiscount = coupons[code];
+        const finalPrice = Math.round(selectedCoursePrice * (1 - appliedDiscount / 100));
+        couponMsg.textContent = `Coupon applied: ${appliedDiscount}% off — Rs ${finalPrice}.`;
+      } else {
+        appliedDiscount = 0;
+        couponMsg.textContent = 'Invalid coupon code.';
+      }
+    });
+
+    courseForm.addEventListener('submit', e => {
+      e.preventDefault();
+      const phone = customerPhone.value.trim();
+      const email = customerEmail.value.trim();
+      if (!phone || !email) return;
+
+      const code = couponCode.value.trim().toUpperCase();
+      const discount = coupons[code] || 0;
+      const finalPrice = Math.round(selectedCoursePrice * (1 - discount / 100));
+      const message =
+        `Hello ATDSIGNALS, I want to buy the ${selectedCourseName} course. ` +
+        `Original price: Rs ${selectedCoursePrice}. ` +
+        (discount ? `Coupon: ${code} (${discount}% off). Final price: Rs ${finalPrice}. ` : '') +
+        `My WhatsApp/phone number: ${phone}. My email: ${email}.`;
+      window.open('https://wa.me/923126462853?text=' + encodeURIComponent(message), '_blank', 'noopener');
+      courseModal.classList.remove('open');
+    });
+
+    document.getElementById('closeCourseModal').onclick = () => courseModal.classList.remove('open');
+    courseModal.addEventListener('click', e => { if(e.target === courseModal) courseModal.classList.remove('open'); });
+
+    const modal = document.getElementById('aboutModal');
+    document.getElementById('aboutBtn').onclick = () => modal.classList.add('open');
+    document.getElementById('closeModal').onclick = () => modal.classList.remove('open');
+    modal.addEventListener('click', e => { if(e.target === modal) modal.classList.remove('open'); });
+
+    const goldDetailModal = document.getElementById('goldDetailModal');
+    const goldCloseBtn = document.getElementById('goldCloseBtn');
+    const goldBuyBtn = document.getElementById('goldBuyBtn');
+    const goldenCourseBtn = document.querySelector('[data-course="Golden Indicator"]');
+
+    if (goldenCourseBtn && goldDetailModal) {
+      goldenCourseBtn.addEventListener('click', () => goldDetailModal.classList.add('open'));
+      goldCloseBtn.addEventListener('click', () => goldDetailModal.classList.remove('open'));
+      goldDetailModal.addEventListener('click', e => {
+        if(e.target === goldDetailModal) goldDetailModal.classList.remove('open');
+      });
+    }
+
+    if (goldBuyBtn) {
+      goldBuyBtn.addEventListener('click', () => {
+        goldDetailModal.classList.remove('open');
+        if (typeof openPurchaseModal === 'function') {
+          openPurchaseModal('Golden Indicator', 7500);
+        } else {
+          const msg = encodeURIComponent('Hello ATDSIGNALS, I want to buy the Golden Indicator course for Rs 7500.');
+          window.open('https://wa.me/923126462853?text=' + msg, '_blank', 'noopener');
+        }
+      });
+    }
+
+
+    const chartCard = document.querySelector('.chart-card');
+    const detailPanel = document.getElementById('chartDetails');
+    document.getElementById('detailBtn').addEventListener('click', () => detailPanel.classList.add('open'));
+    document.getElementById('closeDetails').addEventListener('click', () => detailPanel.classList.remove('open'));
+
+    let paperBalance = 100000;
+    const paperOrders = [];
+
+    function renderPaperOrders(){
+      const el = document.getElementById('paperOrders');
+      if(!paperOrders.length){
+        el.innerHTML = '<div class="empty-orders">No paper orders yet.</div>';
+        return;
+      }
+      el.innerHTML = paperOrders.map(o => `
+        <div class="paper-order">
+          <b>${o.side}</b><span>${o.symbol}</span><span>Qty ${o.qty}</span><span>@ ${o.price}</span>
+        </div>
+      `).join('');
+    }
+
+    document.getElementById('paperOrderBtn').addEventListener('click', () => {
+      const symbol = window.currentMarketSymbol || input.value;
+      const price = Number(window.currentMarketPrice || 0);
+      const qty = Number(document.getElementById('orderQty').value);
+      const side = document.getElementById('orderSide').value;
+      if(!price || !qty || qty <= 0){
+        alert('Load a market and enter a valid quantity first.');
+        return;
+      }
+      const notional = price * qty;
+      if(side === 'BUY' && notional > paperBalance){
+        alert('Not enough paper balance for this simulated order.');
+        return;
+      }
+      if(side === 'BUY') paperBalance -= notional;
+      else paperBalance += notional;
+
+      paperOrders.unshift({
+        side, symbol, qty: qty.toLocaleString(undefined,{maximumFractionDigits:6}),
+        price: price.toLocaleString(undefined,{maximumFractionDigits:8})
+      });
+      document.getElementById('paperBalance').textContent = 'Rs ' + paperBalance.toLocaleString(undefined,{maximumFractionDigits:2});
+      renderPaperOrders();
+    });
+
+
+    const coursesSection = document.getElementById('courses');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if(entry.isIntersecting) document.body.classList.add('golden-scroll');
+      });
+    }, {threshold:.15});
+    if(coursesSection) observer.observe(coursesSection);
+
+    loadChart('BTCUSDT');
+  </script>
+</body>
+</html>
