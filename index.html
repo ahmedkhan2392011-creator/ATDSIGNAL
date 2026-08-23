@@ -1449,6 +1449,7 @@ html.trading-analysis-page {
 .quick-action-card:hover,.quick-action-card:active,.quick-action-card:focus,.quick-action-card.analysis:hover,.quick-action-card.watches:hover,.quick-action-card.trading-terminal-real:hover{background:linear-gradient(135deg,#092142 0%,#10345f 55%,#0b274c 100%) !important;border-color:#315f91 !important;color:#fff !important;transform:none !important;}
 .quick-action-card .quick-icon,.quick-action-card.analysis .quick-icon,.quick-action-card.watches .quick-icon,.quick-action-card.trading-terminal-real .quick-icon{background:#102b50 !important;border:2px solid #315f91 !important;color:#c9dcf5 !important;}
 </style>
+<style id="final-aesthetic-darkpink">.quick-action-card{border:2px solid #721447!important;box-shadow:0 0 16px rgba(190,35,115,.14),inset 0 0 20px rgba(190,35,115,.05)!important}.quick-action-card:hover,.quick-action-card:focus,.quick-action-card:active{border-color:#9b1d63!important;box-shadow:0 0 22px rgba(220,45,135,.24),inset 0 0 22px rgba(190,35,115,.08)!important}.app-stuck-warning{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:999999;max-width:calc(100vw - 28px);padding:9px 14px;border:1px solid #7d174e;border-radius:10px;background:rgba(18,7,20,.97);color:#f7dbea;font:600 12px/1.35 system-ui,sans-serif;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,.35),0 0 14px rgba(190,35,115,.2);opacity:0;pointer-events:none;transition:opacity .18s ease}.app-stuck-warning.show{opacity:1}</style>
 </head>
 <body>
   <div class="prop-close-warning" id="propCloseWarning" aria-hidden="true">
@@ -3166,5 +3167,6 @@ html.home-unlocked,body.home-unlocked{overflow:auto!important;position:static!im
   window.addEventListener('pageshow',restoreHome);
 })();
 </script>
+<script id="final-aesthetic-warning">(()=>{function show(){let w=document.querySelector('.app-stuck-warning');if(!w){w=document.createElement('div');w.className='app-stuck-warning';w.textContent='If the screen gets stuck, click any button and leave.';document.body.appendChild(w)}w.classList.add('show');clearTimeout(w._t);w._t=setTimeout(()=>w.classList.remove('show'),3000)}function close(e){if(!e)return false;let t=(e.textContent||'').trim().toLowerCase(),a=(e.getAttribute('aria-label')||'').toLowerCase();return ['×','✕','x','close'].includes(t)||a.includes('close')}document.addEventListener('click',e=>{let el=e.target.closest('button,a,[role="button"]');if(!el)return;if(close(el))setTimeout(show,80)},true)})()</script>
 </body>
 </html>
